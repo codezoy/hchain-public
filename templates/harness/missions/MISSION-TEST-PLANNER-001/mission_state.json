@@ -1,0 +1,29 @@
+{
+  "mission_id": "MISSION-TEST-PLANNER-001",
+  "mission_goal": "Planner Feedback Flow 검증을 위한 테스트 Mission.",
+  "mission_status": "RUNNING",
+  "success_criteria": [
+    "planner_feedback.sh가 Feed를 파싱하여 Task를 생성한다",
+    "생성된 Task가 queue/pending에 등록된다",
+    "mission_state.json이 next_task, planner_last_run, feedback_cycle 필드로 갱신된다"
+  ],
+  "current_task": "TASK-000",
+  "next_task": "TASK-TEST-001",
+  "completed_tasks": [],
+  "blocked_tasks": [],
+  "progress_percent": 0,
+  "last_report": null,
+  "mission_summary_ref": "harness/missions/MISSION-TEST-PLANNER-001/mission_summary.md",
+  "token_budget": {
+    "max_context_tasks": 3,
+    "max_summary_size_kb": 8,
+    "report_retention_count": 5
+  },
+  "agent_mode": "contract",
+  "codex_enabled": false,
+  "planner_last_run": "2026-06-03T23:00:05Z",
+  "feedback_cycle": 3,
+  "created_at": "2026-06-03T00:00:00Z",
+  "updated_at": "2026-06-03T23:00:05Z",
+  "last_processed_report": "TASK-000_report.md"
+}

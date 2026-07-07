@@ -1,0 +1,12 @@
+{
+  "task_id": "",
+  "status": "PENDING",
+  "current_step": "PLAN",
+  "next_resume_step": "PLAN",
+  "result": "PENDING",
+  "loop_count": 0,
+  "started_at": "",
+  "updated_at": "",
+  "last_success_step": null,
+  "interruption": null
+}

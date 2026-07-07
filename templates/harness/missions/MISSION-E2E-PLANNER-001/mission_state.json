@@ -1,0 +1,9 @@
+{
+  "mission_id": "MISSION-E2E-PLANNER-001",
+  "mission_status": "RUNNING",
+  "next_task": "TASK-E2E-PLANNER-001",
+  "planner_last_run": "2026-06-03T23:06:55Z",
+  "feedback_cycle": 1,
+  "last_processed_report": "TASK-SEED_report.md",
+  "updated_at": "2026-06-03T23:06:55Z"
+}

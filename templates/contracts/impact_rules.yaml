@@ -1,0 +1,115 @@
+# impact_rules.yaml
+# 키워드 → 영향 범위 매핑 룰셋
+# Contract Workflow에서 1차로 이 파일을 사용하며, 매칭 없을 경우 AI 추론(_infer_impacts_from_name)으로 폴백
+
+rules:
+  frontend:
+    - ui
+    - 화면
+    - 페이지
+    - 뷰
+    - 컴포넌트
+    - 프론트
+    - 레이아웃
+    - 폼
+    - 버튼
+    - 모달
+    - 팝업
+    - react
+    - vue
+    - svelte
+    - html
+    - css
+    - frontend
+    - web
+
+  backend:
+    - api
+    - 서버
+    - 백엔드
+    - 엔드포인트
+    - 라우트
+    - 핸들러
+    - 서비스
+    - 비즈니스로직
+    - backend
+    - server
+    - route
+    - endpoint
+    - handler
+    - service
+
+  database:
+    - db
+    - 데이터베이스
+    - 스키마
+    - 마이그레이션
+    - 모델
+    - 테이블
+    - 쿼리
+    - 인덱스
+    - database
+    - schema
+    - migration
+    - model
+    - sql
+    - mongo
+    - redis
+
+  worker:
+    - 큐
+    - 재시도
+    - 배치
+    - 워커
+    - 백그라운드
+    - 비동기
+    - 스케줄
+    - queue
+    - worker
+    - job
+    - task
+    - celery
+    - background
+    - async
+    - batch
+    - schedule
+    - retry
+
+  auth:
+    - 인증
+    - 로그인
+    - 로그아웃
+    - 회원가입
+    - 권한
+    - 역할
+    - 세션
+    - 토큰
+    - auth
+    - login
+    - logout
+    - register
+    - permission
+    - role
+    - session
+    - token
+    - jwt
+
+  logging:
+    - 로그
+    - 감사
+    - 추적
+    - 모니터
+    - log
+    - logging
+    - audit
+    - trace
+    - monitor
+
+  validation:
+    - 검증
+    - 유효성
+    - 제약
+    - validation
+    - valid
+    - check
+    - constraint

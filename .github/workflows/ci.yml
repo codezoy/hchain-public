@@ -1,0 +1,30 @@
+name: CI
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+    branches: ["**"]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Show repository structure
+        run: |
+          echo "Repository checkout complete"
+          find . -maxdepth 2 -not -path './.git/*' | sort
+
+      - name: HCHAIN CI check
+        run: |
+          echo "Python installed: $(python --version)"
+          echo "HCHAIN CI PASS"

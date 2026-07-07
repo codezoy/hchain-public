@@ -1,0 +1,52 @@
+{
+  "_comment": "Mission State Template — harness/missions/MISSION_<id>/mission_state.json",
+  "_version": "0.1.0",
+
+  "mission_id": "MISSION_YYYYMMDD_NNN",
+  "mission_goal": "Mission의 목표를 한 단락으로 서술한다.",
+  "mission_status": "PLANNED",
+  "mission_status_allowed_values": [
+    "PLANNED",
+    "APPROVED",
+    "RUNNING",
+    "BLOCKED",
+    "VALIDATING",
+    "DONE",
+    "FAILED"
+  ],
+
+  "success_criteria": [
+    "검증 가능한 완료 조건 1",
+    "검증 가능한 완료 조건 2"
+  ],
+
+  "current_task": null,
+  "next_task": null,
+
+  "completed_tasks": [],
+  "blocked_tasks": [],
+
+  "progress_percent": 0,
+
+  "last_report": null,
+
+  "mission_summary_ref": "harness/missions/MISSION_YYYYMMDD_NNN/mission_summary.md",
+
+  "token_budget": {
+    "_policy": "컨텍스트 한계 정책. 실제 적용 로직은 별도 구현.",
+    "max_context_tasks": 3,
+    "max_summary_size_kb": 8,
+    "report_retention_count": 5
+  },
+
+  "agent_mode": "contract",
+  "agent_mode_allowed_values": ["off", "contract", "runtime"],
+
+  "codex_enabled": false,
+
+  "planner_last_run": null,
+  "feedback_cycle": 0,
+
+  "created_at": "YYYY-MM-DDTHH:MM:SSZ",
+  "updated_at": "YYYY-MM-DDTHH:MM:SSZ"
+}

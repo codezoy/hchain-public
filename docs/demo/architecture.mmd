@@ -1,0 +1,13 @@
+%% HCHAIN 아키텍처 다이어그램 (공식 재사용 에셋)
+%% README 및 문서에 임베드하여 사용한다.
+%% 편집 후 GitHub에서 자동 렌더링되는지 확인할 것.
+flowchart TD
+    H(["👤 Human"]) --> M["Mission<br/>자연어 작업 요청"]
+    M --> Q["Task Queue<br/>pending / running / done / blocked"]
+    Q --> P["Planner<br/>계약 읽기 · 영향 범위 분석 · 질문 생성"]
+    P --> E["Executor (Claude)<br/>계약 범위 안에서만 코드 변경"]
+    E --> R["Reviewer (Codex CLI)<br/>정적 감사 · CRITICAL/MAJOR 차단"]
+    R --> V["Validator (Shell)<br/>타입체크 · 린트 · 테스트"]
+    V --> A(["✅ Approval<br/>Human Gate · 기록 보존"])
+    R -. "MAJOR 이상 이슈<br/>loop < 3" .-> E
+    V -. "검증 실패<br/>loop < 3" .-> E

@@ -1,20 +1,65 @@
 # HCHAIN
 
-![CI](https://github.com/codezoy/hchain/actions/workflows/ci.yml/badge.svg)
+[![CI](https://github.com/codezoy/hchain/actions/workflows/ci.yml/badge.svg)](https://github.com/codezoy/hchain/actions/workflows/ci.yml)
 
-> AI Task Harness Framework — Contract First, Human Approved · v0.1.0
+> A contract-first **AI Agent Orchestration** and **Automation Harness** for
+> turning a human-approved mission into reviewable, verifiable execution.
 
-**One Mission Contract → Multiple Tasks → One Implementation Report**
+HCHAIN coordinates Planner, Executor, Reviewer, and Validator roles through a
+filesystem task queue and an explicit pipeline:
 
-사람이 Mission Contract를 한 번 정의하면, HCHAIN이 이를 실행 가능한 Task들로 분해하고,
-각 Task를 계약된 파이프라인(PLAN → RESEARCH → ACTION → REVIEW → VALIDATE → DONE)으로 실행한 뒤,
-하나의 Implementation Report로 결과를 돌려준다.
+`PLAN → RESEARCH → ACTION → REVIEW → VALIDATE → DONE`
+
+It is built for **Workflow Reliability**: scope is captured before code changes,
+static **Evaluation** is separated from runtime **Verification**, failed gates can
+route back to controlled rework, and checkpoints preserve an auditable trail.
+
+| Capability | What exists in this repository |
+|---|---|
+| **Agent Orchestration** | Role-specific prompts, provider routing, handoffs, retries, and human approval gates |
+| **Automation Harness** | Bash/Python runner, filesystem queue, mission-to-task execution, checkpoints, and structured reports |
+| **Evaluation** | Independent Reviewer gate with severity-based blocking and rework routing |
+| **Verification** | Shell Validator gate for project-defined tests, lint, builds, health checks, and E2E commands |
+| **Workflow Reliability** | Locking, resume/recovery, bounded retries, DAG checks, event logs, and observability reports |
+| **MCP / RAG workloads** | HCHAIN can govern tasks that build or evaluate MCP and RAG systems; it is not itself an MCP server or RAG engine |
+
+The core design is intentionally model- and project-agnostic. Provider profiles
+include Codex-only, alternating, and manual execution modes, while validation
+remains grounded in commands and artifacts rather than an agent's self-report.
+
+## 30-second demo
+
+**One Mission → Multiple Tasks → One Report**
+
+![HCHAIN Demo](docs/demo/hchain-demo.gif)
+
+```bash
+bash scripts/demo.sh
+```
+
+The deterministic demo runs the real local workflow in a temporary sandbox:
+Contract Workflow → Task Queue → Executor → REVIEW/VALIDATE gates → report. It
+does not require an external AI CLI. See [the demo guide](docs/demo/README.md)
+for the scenario and recording steps.
+
+```mermaid
+flowchart TD
+    H(["👤 Human"]) --> M["Mission<br/>자연어 작업 요청"]
+    M --> Q["Task Queue<br/>pending / running / done / blocked"]
+    Q --> P["Planner<br/>계약 읽기 · 영향 범위 분석 · 질문 생성"]
+    P --> E["Executor<br/>계약 범위 안에서만 코드 변경"]
+    E --> R["Reviewer<br/>정적 감사 · CRITICAL/MAJOR 차단"]
+    R --> V["Validator (Shell)<br/>타입체크 · 린트 · 테스트"]
+    V --> A(["✅ Approval<br/>Human Gate · 기록 보존"])
+    R -. "MAJOR 이상 이슈<br/>loop < 3" .-> E
+    V -. "검증 실패<br/>loop < 3" .-> E
+```
 
 ---
 
-## HCHAIN이 해결하려는 문제
+## The Problem
 
-처음엔 내가 GPT↔Claude 사이의 메신저였다. GPT가 프롬프트를 작성하고, Claude가 코딩하고, 다시 GPT가 결과를 분석하는 루프를 **사람이 직접 중계**했다. "고쳐줘 / 다시 확인해줘 / 테스트 했어?" — 매번 말로 지시해야 했고 같은 실수가 반복됐다.
+### 기존 작업 방식의 문제
 
 | 문제 | 증상 |
 |------|------|
@@ -27,95 +72,6 @@
 ai-video 프로젝트(API·DB·Worker·Queue·TTS·Scene·Render·재기동 복구)를 구축하면서, AI가 겉으론 동작하는 코드를 만들지만 실제로 실행하면 중간에서 깨지는 경험을 여러 번 했다.
 
 **더 근본적인 문제**: AI는 "무엇을 만들 것인가"를 명확히 이해하기 전에 코드를 작성하는 경향이 있다. 영향 범위를 모른 채 수정하고, 빠진 정책은 무시하고, 기존 계약과 충돌하는 코드를 추가했다.
-
----
-
-## HCHAIN의 핵심 아이디어
-
-**"긴 프롬프트"가 아니라 "Mission Contract"다.**
-
-AI에게 일을 시키는 일반적인 방법은 프롬프트를 잘 쓰는 것이다. 하지만 프롬프트는 대화가 끝나면 사라지고, 다음에 같은 결과를 재현할 수 없다. HCHAIN은 작업 요청을 **계약 문서(Contract)** 로 고정한다:
-
-```
-Contract → Tasks → Report
-```
-
-1. **Mission Contract** — "무엇을 왜 만드는가"를 문서로 정의한다. 완료 기준·영향 범위·검증 방법이 포함된다.
-2. **Tasks** — Mission이 실행 가능한 단위로 분해되어 파일시스템 큐(pending → running → done / blocked)에 등록된다.
-3. **Implementation Report** — 각 Task는 REVIEW/VALIDATE 게이트를 통과해야 완료되고, 무엇이 왜 바뀌었는지 기록으로 남는다.
-
-핵심 원칙: **계약이 먼저, 코드가 나중이다.** 계약 없이 코드 작성은 금지된다.
-
----
-
-## 기존 AI Harness와의 차이
-
-| 일반적인 AI Harness | HCHAIN |
-|---|---|
-| 여러 AI 모델 연결 중심 | 하나의 Mission Contract 실행 중심 |
-| Prompt → Response | Contract → Tasks → Report |
-| 대화 중심 | 워크플로우 중심 |
-| 사람이 매 단계 조율 | 사람이 계약을 한 번 정의 |
-| 유연하지만 결과가 흔들릴 수 있음 | 구조화되고 재현 가능한 실행 |
-| AI 협업 실험 | 개발 작업 오케스트레이션 |
-
----
-
-## 왜 HCHAIN을 사용해야 하는가?
-
-- **재현 가능한 실행** — 같은 계약은 같은 파이프라인을 거친다. 결과가 사람의 프롬프트 실력에 좌우되지 않는다.
-- **범위 제한** — Executor는 계약에 명시된 범위 안에서만 코드를 변경한다. Scope Drift를 구조적으로 차단한다.
-- **자동 품질 게이트** — 모든 변경은 Reviewer(정적 감사)와 Validator(타입체크·린트·테스트)를 통과해야 완료된다. "고쳐줘 / 테스트 했어?"를 사람이 반복하지 않는다.
-- **감사 추적(Audit Trail)** — Task 정의·실행 로그·리뷰 결과·검증 기록이 파일로 남는다. 무엇을 왜 변경했는지 추적할 수 있다.
-- **안전 장치** — MAJOR 이상 이슈는 자동 재시도, 3회 초과 시 Safety Break로 사람에게 넘긴다. 조용한 실패가 없다.
-
-HCHAIN은 "완전 자율 개발"을 주장하지 않는다. 현재는 **반자동(Human-in-the-loop)** — 사람이 계약을 정의하고 최종 승인하는 Gate 역할을 유지한다.
-
----
-
-## 적합한 사용 사례
-
-- 기능 개발을 여러 Task로 분해해 **순차 파이프라인**으로 실행하고 싶을 때
-- AI의 수정 범위를 **계약으로 제한**하고 싶은 기존 코드베이스
-- 변경 이력·리뷰 결과·검증 기록이 **감사 추적**으로 남아야 하는 프로젝트
-- 구현 → 리뷰 → 검증 사이클을 자동화하되, **최종 승인은 사람이** 하고 싶을 때
-
-## 적합하지 않은 사용 사례
-
-- 일회성 질문·답변, 탐색적 대화 (일반 AI 챗이 더 빠르다)
-- 계약을 정의할 필요가 없는 한 줄짜리 수정 (직접 고치는 게 더 빠르다)
-- 사람 개입 없는 **완전 무인 자동화**를 기대하는 경우 (아직 Roadmap 단계)
-- 여러 AI 모델을 자유롭게 연결·조합하는 실험 (HCHAIN은 실행 구조가 고정된 워크플로우다)
-
----
-
-## Demo
-
-**One Mission → Multiple Tasks → One Report**
-
-![HCHAIN Demo](docs/demo/hchain-demo.gif)
-
-```bash
-bash scripts/demo.sh
-```
-
-Mission 하나가 Contract Workflow(Planner) → Task Queue → 파이프라인 순차 실행(Executor)
-→ REVIEW/VALIDATE 게이트 → Implementation Report로 이어지는 전체 흐름을
-임시 샌드박스에서 **실제 기능만으로** 재현한다. 외부 AI CLI 없이 동작한다.
-시나리오·녹화 절차는 [docs/demo/](docs/demo/README.md) 참고.
-
-```mermaid
-flowchart TD
-    H(["👤 Human"]) --> M["Mission<br/>자연어 작업 요청"]
-    M --> Q["Task Queue<br/>pending / running / done / blocked"]
-    Q --> P["Planner<br/>계약 읽기 · 영향 범위 분석 · 질문 생성"]
-    P --> E["Executor (Claude)<br/>계약 범위 안에서만 코드 변경"]
-    E --> R["Reviewer (Codex CLI)<br/>정적 감사 · CRITICAL/MAJOR 차단"]
-    R --> V["Validator (Shell)<br/>타입체크 · 린트 · 테스트"]
-    V --> A(["✅ Approval<br/>Human Gate · 기록 보존"])
-    R -. "MAJOR 이상 이슈<br/>loop < 3" .-> E
-    V -. "검증 실패<br/>loop < 3" .-> E
-```
 
 ---
 
@@ -300,7 +256,7 @@ PLAN → RESEARCH → ACTION → REVIEW → VALIDATE → DONE
 
 ---
 
-## Quick Start
+## 설치
 
 ### 요구사항
 
@@ -407,7 +363,7 @@ bash harness/harness_runner.sh --resume TASK_20260101_001 --force
 
 ## Future Roadmap
 
-**현재 v0.1.0에서 동작하는 것:**
+**현재 v0.1.1에서 동작하는 것:**
 
 - Contract First Workflow (6단계 내부 파이프라인)
 - Feature Contract 자동 생성 (프로젝트 구조 분석 포함)

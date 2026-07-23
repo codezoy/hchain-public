@@ -1,0 +1,17 @@
+.git
+.gitignore
+.venv
+.pytest_cache
+__pycache__
+*.py[cod]
+*.egg-info
+
+harness/active_state.json
+harness/checkpoints
+harness/handoffs
+harness/locks
+harness/logs
+harness/queue/blocked
+harness/queue/pending
+harness/queue/running
+harness/tasks

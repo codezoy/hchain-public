@@ -42,6 +42,22 @@ Contract Workflow → Task Queue → Executor → REVIEW/VALIDATE gates → repo
 does not require an external AI CLI. See [the demo guide](docs/demo/README.md)
 for the scenario and recording steps.
 
+## Docker로 실행하기
+
+Docker와 Docker Compose가 설치되어 있으면 네 개 명령으로 동일한 데모와
+테스트를 재현할 수 있다. 외부 AI CLI나 호스트 Python 환경은 필요하지 않다.
+
+```bash
+git clone https://github.com/codezoy/hchain-public.git hchain
+cd hchain && docker compose build
+docker compose run --rm demo
+docker compose run --rm test
+```
+
+`demo` 서비스는 `DEMO_PAUSE=0 bash scripts/demo.sh`를 실행하며 최종 출력에서
+Reviewer와 Validator가 각각 `4/4`인지 확인한다. `test` 서비스는 이미지의
+격리된 Python 3.10 환경에서 `pytest -q`를 실행한다.
+
 ```mermaid
 flowchart TD
     H(["👤 Human"]) --> M["Mission<br/>자연어 작업 요청"]
@@ -363,7 +379,7 @@ bash harness/harness_runner.sh --resume TASK_20260101_001 --force
 
 ## Future Roadmap
 
-**현재 v0.1.1에서 동작하는 것:**
+**현재 v0.1.0에서 동작하는 것:**
 
 - Contract First Workflow (6단계 내부 파이프라인)
 - Feature Contract 자동 생성 (프로젝트 구조 분석 포함)

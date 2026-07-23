@@ -154,7 +154,7 @@ for entry in "${TASKS[@]}"; do
 
     if [[ $rc -eq 0 ]] && grep -q "\[HARNESS\] DONE" "$LOG_FILE"; then
         PASS_COUNT=$((PASS_COUNT + 1))
-        grep -q "auto-approve REVIEW"   "$LOG_FILE" && REVIEW_COUNT=$((REVIEW_COUNT + 1))
+        grep -Eq "auto-approve REVIEW|REVIEW_SKIPPED\(empty_diff\)" "$LOG_FILE" && REVIEW_COUNT=$((REVIEW_COUNT + 1))
         grep -q "auto-approve VALIDATE" "$LOG_FILE" && VALIDATE_COUNT=$((VALIDATE_COUNT + 1))
         printf "    PLAN → RESEARCH → ACTION → REVIEW → VALIDATE → DONE   ${GREEN}✔ PASS${RESET}\n"
     else

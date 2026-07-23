@@ -1,0 +1,14 @@
+services:
+  demo:
+    build:
+      context: .
+      target: demo
+    environment:
+      DEMO_PAUSE: "0"
+    command: ["bash", "scripts/demo.sh"]
+
+  test:
+    build:
+      context: .
+      target: test
+    command: ["pytest", "-q"]
